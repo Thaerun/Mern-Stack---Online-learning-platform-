@@ -6,10 +6,13 @@ import LandingPage from './Pages/LandingPage';
 import Dashboard from './Pages/Dashboard';
 import ForgotPassword from './Pages/ForgotPassword';
 import InstructorAuth from './Pages/InstructorAuth';
+import InstructorDashboard from './Pages/InstructorDashboard';
+import CreateCourse from './Pages/CreateCourse';
+import Earnings from './Pages/earnings';
 
 export default function App() {
     const [authToken, setAuthToken] = useState(null);
-    const [isCheckingAuth, setIsCheckingAuth] = useState(true); // New state to handle loading
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
     // On mount, check localStorage for authToken
     useEffect(() => {
@@ -37,6 +40,7 @@ export default function App() {
                 <Route path="/login" element={<Login setAuthToken={setAuthToken} />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/instructor-auth" element={<InstructorAuth setAuthToken={setAuthToken} />} />
+
                 
                 {/* LandingPage is public */}
                 <Route path="/" element={<LandingPage />} /> 
@@ -47,8 +51,17 @@ export default function App() {
                     element={authToken ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/login" />} 
                 />
                 <Route
-                    path="/instructor/dashboard"
-                    element={authToken ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/instructor-auth" />} 
+                    path="/instructor-dashboard"
+                    element={authToken ? <InstructorDashboard onLogout={handleLogout} /> : <Navigate to="/instructor-auth" />} 
+                />
+                <Route
+                    path="/create-course"
+                    element={authToken ? <CreateCourse onLogout={handleLogout} /> : <Navigate to="/instructor-auth" />} 
+                />
+
+                <Route
+                    path="/earnings"
+                    element={authToken ? <Earnings onLogout={handleLogout} /> : <Navigate to="/instructor-auth" />} 
                 />
 
                 {/* Redirect any undefined routes to home */}

@@ -3,8 +3,9 @@ import { Form, Button, Card, Container, Row, Col, Modal, Nav } from 'react-boots
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-export default function InstructorAuth() {
-    const [currentView, setCurrentView] = useState('login'); // "login", "signup", "forgot-password"
+export default function InstructorAuth({ setAuthToken }) {
+    const [currentView, setCurrentView] = useState('login');
+    const [otpButtonText, setOtpButtonText] = useState("Send OTP");
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,9 +21,15 @@ export default function InstructorAuth() {
         try {
             const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/login`, { email, password });
             localStorage.setItem('authToken', response.data.token);
-            navigate('/instructor/dashboard'); // Redirect to instructor dashboard
+            localStorage.setItem('instructorEmail', email);
+            setAuthToken(response.data.token);
+            navigate('/instructor-dashboard'); // Redirect to instructor dashboard
         } catch (error) {
-            console.error('Error logging in', error);
+            if (error.response && error.response.data === 'Please verify your email before logging in') {
+                alert('Please verify your email before logging in.');
+            } else {
+                console.error('Error logging in', error);
+            }
         }
     };
 
@@ -33,7 +40,7 @@ export default function InstructorAuth() {
                 alert('Passwords do not match');
                 return;
             }
-            await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/signup`, { email, password });
+            const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/signup`, { email, password });
             alert('Account created successfully! Please log in to continue.');
             setCurrentView('login'); // Switch to login view after signup
         } catch (error) {
@@ -44,6 +51,7 @@ export default function InstructorAuth() {
     const handleOtpClick = async () => {
         try {
             await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/forgot-password`, { email });
+            setOtpButtonText("Resend OTP");
             setOtpSent(true);
             console.log("OTP Sent!");
         } catch (error) {
@@ -53,8 +61,10 @@ export default function InstructorAuth() {
 
     const handleVerifyOtpClick = async () => {
         try {
-            await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/verify-otp`, { email, otp });
-            setShowModal(true);
+            const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/verify-otp`, { email, otp });
+            if(response.data === 'OTP verified. You can now reset your password.'){
+                setShowModal(true);
+            }
         } catch (error) {
             console.error("Error verifying OTP", error);
         }
@@ -69,7 +79,7 @@ export default function InstructorAuth() {
             await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/update-password`, { email, newPassword });
             alert('Password updated successfully.');
             setShowModal(false);
-            setCurrentView('login'); // Switch to login view after password update
+            setCurrentView('login');
         } catch (error) {
             console.error("Error updating password", error);
         }
@@ -79,7 +89,7 @@ export default function InstructorAuth() {
         <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
             <Row>
                 <Col md={12}>
-                    <Nav variant="tabs" defaultActiveKey="login" className="mb-4">
+                    <Nav variant="tabs" activeKey={currentView} className="mb-4">
                         <Nav.Item>
                             <Nav.Link eventKey="login" onClick={() => setCurrentView('login')}>Login</Nav.Link>
                         </Nav.Item>
@@ -88,8 +98,8 @@ export default function InstructorAuth() {
                         </Nav.Item>
                     </Nav>
                 </Col>
-                <Col md={8}> {/* Make the card wider */}
-                    <Card className="shadow-lg p-3 mb-5 bg-white rounded">
+                <Col md={8} lg={10} className='mx-auto'> {/* Make the card wider */}
+                    <Card className="shadow-lg p-3 mb-5 bg-white rounded" style={{ maxWidth: '900px', width: '100%' }}>
                         <Card.Body>
                             <h2 className="text-center mb-4">{currentView === 'login' ? 'Login' : currentView === 'signup' ? 'Sign Up' : 'Forgot Password'}</h2>
                             {currentView === 'login' && (
@@ -115,8 +125,8 @@ export default function InstructorAuth() {
                                         />
                                     </Form.Group>
                                     <Button className="w-100 mt-3" type="submit">Sign In</Button>
-                                    <div className="w-100 text-center mt-3">
-                                        Don’t Have an Account? <Button variant="link" onClick={() => { setCurrentView('signup'); setEmail(''); setPassword(''); setConfirmPassword(''); }}>Signup</Button>
+                                    <div className="w-100 text-center mt-3 d-flex justify-content-center align-items-center">
+                                        Don’t Have an Account? <Button variant="link" className='p-0' onClick={() => { setCurrentView('signup'); setEmail(''); setPassword(''); setConfirmPassword(''); }}>Signup</Button>
                                     </div>
                                     <div className="text-right mt-2">
                                         <Button variant="link" onClick={() => {
@@ -161,9 +171,9 @@ export default function InstructorAuth() {
                                         />
                                     </Form.Group>
                                     <Button className="w-100 mt-3" type="submit">Sign Up</Button>
-                                    <div className="w-100 text-center mt-3">
+                                    <div className="w-100 text-center mt-3  d-flex justify-content-center align-items-center">
                                         Already Have an Account? 
-                                        <Button variant="link" onClick={() => { 
+                                        <Button variant="link" className='p-0 ml-1' onClick={() => { 
                                             setEmail(''); setPassword(''); setCurrentView('login');
                                             }}>Login</Button>
                                     </div>

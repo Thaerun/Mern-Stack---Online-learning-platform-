@@ -2,7 +2,9 @@ import React from 'react';
 import {  FaUsers, FaAward, FaStar, FaChevronRight } from 'react-icons/fa';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
+import { useNavigate } from 'react-router-dom';
 export default function LandingPage() {
+  const navigate = useNavigate();
   return (
     <div className="d-flex flex-column min-vh-100">
       <Header />
@@ -16,7 +18,7 @@ export default function LandingPage() {
                 <p className="lead mb-4">Start, switch, or advance your career with thousands of courses from expert instructors.</p>
                 <div className="d-flex flex-column flex-sm-row gap-2">
                   <button className="btn btn-primary btn-lg">Explore Courses</button>
-                  <button className="btn btn-outline-primary btn-lg">Become an Instructor</button>
+                  <button className="btn btn-outline-primary btn-lg"  onClick={() => navigate('/instructor-auth')}>Become an Instructor</button>
                 </div>
               </div>
               <div className="col-lg-6 mt-4 mt-lg-0">

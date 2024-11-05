@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Signup from './Pages/Signup';
 import Login from './Pages/Login';
 import LandingPage from './Pages/LandingPage';
-import Dashboard from './Pages/Dashboard'; // New Dashboard component
+import Dashboard from './Pages/Dashboard';
+import ForgotPassword from './Pages/ForgotPassword';
+import InstructorAuth from './Pages/InstructorAuth';
 
 export default function App() {
     const [authToken, setAuthToken] = useState(null);
@@ -33,6 +35,8 @@ export default function App() {
             <Routes>
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/login" element={<Login setAuthToken={setAuthToken} />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/instructor-auth" element={<InstructorAuth setAuthToken={setAuthToken} />} />
                 
                 {/* LandingPage is public */}
                 <Route path="/" element={<LandingPage />} /> 
@@ -41,6 +45,10 @@ export default function App() {
                 <Route
                     path="/dashboard"
                     element={authToken ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/login" />} 
+                />
+                <Route
+                    path="/instructor/dashboard"
+                    element={authToken ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/instructor-auth" />} 
                 />
 
                 {/* Redirect any undefined routes to home */}

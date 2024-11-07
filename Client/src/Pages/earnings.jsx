@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
-import {
-  Chart,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from 'chart.js'; // Import necessary elements
+import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
+import Sidebar from '../Components/SideBar';
 
-const Earnings = ( {onLogout} ) => {
+const Earnings = ({ onLogout }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [chartData, setChartData] = useState({});
+
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   // Sample earnings data for display
   const earningsData = [
@@ -19,62 +18,51 @@ const Earnings = ( {onLogout} ) => {
   ];
 
   useEffect(() => {
-    // Register necessary components for Chart.js
     Chart.register(ArcElement, Tooltip, Legend);
     
-    // Prepare data for the pie chart
     const data = {
       labels: earningsData.map(course => course.title),
       datasets: [
         {
           data: earningsData.map(course => course.earnings),
-          backgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56',
-            '#4BC0C0',
-          ],
-          hoverBackgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56',
-            '#4BC0C0',
-          ],
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+          hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
         },
       ],
     };
 
-    // Update the chart data state
     setChartData(data);
-  }, []); // Run only on mount
+  }, []);
+
+  // Auto-collapse sidebar on smaller screens
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsSidebarOpen(false);
+      }
+      else{
+        setIsSidebarOpen(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Check initial width
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div className="d-flex min-vh-100 bg-light">
-      {/* Sidebar */}
-      <div className="bg-primary text-white p-4" style={{ width: '250px', position: 'fixed', height: '100vh', overflowY: 'auto' }}>
-        <h2 className="text-center mb-4">Dashboard</h2>
-        <ul className="nav flex-column">
-          <li className="nav-item mb-3">
-            <a href="/instructor-dashboard" className="nav-link text-white">
-              My Courses
-            </a>
-          </li>
-          <li className="nav-item mb-3">
-            <a href="/create-course" className="nav-link text-white">
-              Create a Course
-            </a>
-          </li>
-          <li className="nav-item mb-3">
-            <a href="/earnings" className="nav-link text-white">
-              Earnings
-            </a>
-          </li>
-        </ul>
-        <button className="btn btn-primary" onClick={onLogout}>Logout</button>
-      </div>
+      <Sidebar onLogout={onLogout} isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
       {/* Main Content */}
-      <div className="flex-grow-1 p-5" style={{ marginLeft: '250px' }}>
+      <div
+        className="flex-grow-1 p-5"
+        style={{
+          marginLeft: isSidebarOpen ? '250px' : '70px', // Adjust dynamically based on sidebar width
+          transition: 'margin-left 0.3s',
+        }}
+      >
         <h2 className="text-primary mb-4">Earnings Overview</h2>
         <div className="table-responsive" style={{ maxWidth: '600px' }}>
           <table className="table table-striped">
@@ -94,15 +82,15 @@ const Earnings = ( {onLogout} ) => {
             </tbody>
           </table>
         </div>
-        {/* Pie Chart */}
+
         <div className="mt-5">
           <h3 className="text-primary mb-4">Earnings Distribution</h3>
-          {chartData.labels ? (  // Check if chartData is populated
-            <div style={{ width: '600px', height: '600px' }}> {/* Set the desired width and height */}
+          {chartData.labels ? (
+            <div style={{ width: '600px', height: '600px' }}>
               <Pie data={chartData} />
             </div>
           ) : (
-            <p>Loading chart...</p> // Fallback UI
+            <p>Loading chart...</p>
           )}
         </div>
       </div>

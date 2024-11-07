@@ -2,17 +2,41 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from '../Components/SideBar';
 
 const InstructorDashboard = ({ onLogout }) => {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [courses, setCourses] = useState([]);
     const navigate = useNavigate();
 
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
     useEffect(() => {
         const fetchCourses = async () => {
-            const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses`);
-            setCourses(response.data);
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses`);
+                setCourses(response.data);
+            } catch (error) {
+                console.error("Error fetching courses:", error);
+            }
         };
         fetchCourses();
+    }, []);
+
+    // Auto-collapse sidebar on smaller screens
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setIsSidebarOpen(false);
+            } else {
+                setIsSidebarOpen(true);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Check initial width
+
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     const handleDelete = async (id) => {
@@ -28,42 +52,45 @@ const InstructorDashboard = ({ onLogout }) => {
         }
     };
 
-    const handleEdit = (course) => {
-        navigate('/edit-course', { state: { course } });
+    const handleEdit = (courseId) => {
+        navigate(`/edit-course/${courseId}`);
     };
 
     return (
         <div className="d-flex min-vh-100 bg-light">
             {/* Sidebar */}
-            <div className="bg-primary text-white p-4" style={{ width: '250px', position: 'fixed', height: '100vh', overflowY: 'auto' }}>
-                <h2 className="text-center mb-4">Dashboard</h2>
-                <ul className="nav flex-column">
-                    <li className="nav-item mb-3">
-                        <a href="/instructor-dashboard" className="nav-link text-white">My Courses</a>
-                    </li>
-                    <li className="nav-item mb-3">
-                        <a href="/create-course" className="nav-link text-white">Create a Course</a>
-                    </li>
-                    <li className="nav-item">
-                        <a href="/earnings" className="nav-link text-white">Earnings</a>
-                    </li>
-                </ul>
-                <button className="btn btn-primary" onClick={onLogout}>Logout</button>
-            </div>
+            <Sidebar onLogout={onLogout} isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
             {/* Main Content */}
-            <div className="flex-grow-1 p-5" style={{ marginLeft: '250px' }}>
+            <div
+                className="flex-grow-1 p-5"
+                style={{
+                    marginLeft: isSidebarOpen ? '250px' : '70px', // Adjust dynamically based on sidebar width
+                    transition: 'margin-left 0.3s',
+                }}
+            >
                 <h2 className="text-primary mb-4">My Courses</h2>
                 <div className="row g-4">
                     {courses.map((course) => (
                         <div key={course._id} className="col-md-6 col-lg-3">
-                            <div className="card h-100 shadow-sm border-0">
-                                <img src={course.imageUrl || "vite.svg"} alt="Course Thumbnail" className="card-img-top" style={{ height: '150px', objectFit: 'contain' }} />
-                                <div className="card-body">
+                            <div className="card h-100 shadow-sm border-0" style={{ width: '250px', height: '350px' }}>
+                                <img
+                                    src={course.imageUrl || "vite.svg"}
+                                    alt="Course Thumbnail"
+                                    className="card-img-top"
+                                    style={{
+                                        height: '150px',
+                                        width: '100%',
+                                        objectFit: 'contain',
+                                        padding: '2px 5px',
+                                        borderRadius: '8px', // Rounded corners for the image
+                                    }}
+                                />
+                                <div className="card-body d-flex flex-column">
                                     <h5 className="card-title text-primary">{course.title}</h5>
-                                    <p className="card-text text-muted">{course.description}</p>
+                                    <p className="card-text text-muted" style={{ flexGrow: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>{course.description}</p>
                                     <div className="d-flex justify-content-between">
-                                        <button className="btn btn-outline-primary btn-sm" onClick={() => handleEdit(course)}>Edit</button>
+                                        <button className="btn btn-outline-primary btn-sm" onClick={() => handleEdit(course._id)}>Edit</button>
                                         <button className="btn btn-link text-danger btn-sm" onClick={() => handleDelete(course._id)}>Delete</button>
                                     </div>
                                 </div>

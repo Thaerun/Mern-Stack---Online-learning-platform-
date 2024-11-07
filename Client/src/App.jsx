@@ -9,6 +9,9 @@ import InstructorAuth from './Pages/InstructorAuth';
 import InstructorDashboard from './Pages/InstructorDashboard';
 import CreateCourse from './Pages/CreateCourse';
 import Earnings from './Pages/earnings';
+import EditCourse from './Pages/EditCourse';
+import Profile from './Pages/Profile';
+import StudentDashboard from './Pages/StudentDashboard';
 
 export default function App() {
     const [authToken, setAuthToken] = useState(null);
@@ -48,7 +51,7 @@ export default function App() {
                 {/* Protected route for Dashboard */}
                 <Route
                     path="/dashboard"
-                    element={authToken ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/login" />} 
+                    element={authToken ? <StudentDashboard onLogout={handleLogout} /> : <Navigate to="/login" />} 
                 />
                 <Route
                     path="/instructor-dashboard"
@@ -64,6 +67,15 @@ export default function App() {
                     element={authToken ? <Earnings onLogout={handleLogout} /> : <Navigate to="/instructor-auth" />} 
                 />
 
+                <Route 
+                    path="/edit-course/:courseId" 
+                    element={authToken ? <EditCourse  onLogout={handleLogout} /> : <Navigate to= "/instructor-auth" /> } 
+                />
+                
+                <Route
+                    path="/profile"
+                    element={authToken? <Profile onLogout={handleLogout} /> : <Navigate to="/instructor-auth" />}
+                />
                 {/* Redirect any undefined routes to home */}
                 <Route path="*" element={<Navigate to="/" />} /> 
             </Routes>

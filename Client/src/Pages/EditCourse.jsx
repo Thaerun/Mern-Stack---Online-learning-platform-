@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Sidebar from '../Components/SideBar';
 
-const CreateCourse = ({ onLogout }) => {
+const EditCourse = ({ onLogout }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { state } = useLocation();
+  const { courseId } = useParams();
+  const navigate = useNavigate();
+
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
   const [courseTitle, setCourseTitle] = useState('');
   const [coursePrice, setCoursePrice] = useState('');
   const [courseDescription, setCourseDescription] = useState('');
@@ -15,7 +22,24 @@ const CreateCourse = ({ onLogout }) => {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses/${courseId}`);
+        const { title, price, description, requirements, sections, imageUrl } = response.data;
+        setCourseTitle(title);
+        setCoursePrice(price);
+        setCourseDescription(description);
+        setCourseRequirements(requirements);
+        setSections(sections.map(section => ({ ...section, video: null })));
+        setCourseImageUrl(imageUrl);
+      } catch (error) {
+        console.error("Error fetching course data:", error);
+      }
+    };
+
+    fetchCourse();
+  }, [courseId]);
 
   // Auto-collapse sidebar on smaller screens
   useEffect(() => {
@@ -34,7 +58,6 @@ const CreateCourse = ({ onLogout }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Handlers for form input fields
   const handleAddRequirement = () => setCourseRequirements([...courseRequirements, '']);
   const handleRequirementChange = (index, value) => {
     const updatedRequirements = [...courseRequirements];
@@ -53,9 +76,8 @@ const CreateCourse = ({ onLogout }) => {
     setSections(updatedSections);
   };
 
-  // Handle Image Upload
   const handleImageUpload = async (file) => {
-    setIsUploadingImage(true); // Show loading indicator
+    setIsUploadingImage(true);
     const formData = new FormData();
     formData.append('image', file);
 
@@ -67,13 +89,12 @@ const CreateCourse = ({ onLogout }) => {
     } catch (error) {
       console.error("Error uploading image:", error);
     } finally {
-      setIsUploadingImage(false); // Hide loading indicator
+      setIsUploadingImage(false);
     }
   };
 
-  // Handle Video Upload for Sections
   const handleSectionVideoUpload = async (index, file) => {
-    setIsUploadingVideo(true); // Show loading indicator
+    setIsUploadingVideo(true);
     const updatedSections = [...sections];
     updatedSections[index].video = file;
     setSections(updatedSections);
@@ -91,7 +112,7 @@ const CreateCourse = ({ onLogout }) => {
     } catch (error) {
       console.error("Error uploading video:", error);
     } finally {
-      setIsUploadingVideo(false); // Hide loading indicator
+      setIsUploadingVideo(false);
     }
   };
 
@@ -111,34 +132,33 @@ const CreateCourse = ({ onLogout }) => {
       sections: sections.map(section => ({
         title: section.title,
         description: section.description,
-        videoUrl: section.videoUrl, // only submit the video URL, not the file
+        videoUrl: section.videoUrl,
       })),
       imageUrl: courseImageUrl,
       instructorEmail,
     };
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/create-course`, courseData);
-      console.log("Course created successfully:", response.data);
-      window.location.reload(); // to relaod the page so that the fields gets reset
+      const response = await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses/${courseId}`, courseData);
+      console.log("Course updated successfully:", response.data);
+      navigate('/instructor-dashboard'); // Redirect to dashboard after saving
     } catch (error) {
-      console.error("Error creating course:", error);
+      console.error("Error updating course:", error);
     }
   };
 
   return (
     <div className="d-flex min-vh-100 bg-light">
-      {/* Sidebar */}
-
       <Sidebar onLogout={onLogout} isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar}/>
       {/* Main Content */}
-      <div className="flex-grow-1 p-5" 
-      style={{ 
-        marginLeft: isSidebarOpen ? '250px' : '70px', // Adjust dynamically based on sidebar width
-        transition: 'margin-left 0.3s',
-      }}
+      <div
+        className="flex-grow-1 p-5"
+        style={{
+          marginLeft: isSidebarOpen ? '250px' : '70px', // Adjust dynamically based on sidebar width
+          transition: 'margin-left 0.3s',
+        }}
       >
-        <h2 className="text-primary mb-4">Create New Course</h2>
+        <h2 className="text-primary mb-4">Edit Course</h2>
         <form onSubmit={handleSubmit}>
           {/* Course Title */}
           <div className="mb-3">
@@ -184,9 +204,8 @@ const CreateCourse = ({ onLogout }) => {
               className="form-control" 
               accept="image/*" 
               onChange={(e) => handleImageUpload(e.target.files[0])} 
-              required 
             />
-            {isUploadingImage && <p className="text-primary mt-2">Uploading image...</p>}
+            {isUploadingImage ? <p className="text-primary mt-2">Uploading image...</p> : courseImageUrl && <p className="text-success mt-2">Image uploaded successfully!</p>}
           </div>
 
           {/* Course Requirements */}
@@ -259,9 +278,8 @@ const CreateCourse = ({ onLogout }) => {
                     className="form-control" 
                     accept="video/*" 
                     onChange={(e) => handleSectionVideoUpload(index, e.target.files[0])} 
-                    required 
                   />
-                  {isUploadingVideo && <p className="text-primary mt-2">Uploading video...</p>}
+                  {isUploadingVideo ? <p className="text-primary mt-2">Uploading video...</p> : section.videoUrl && <p className="text-success mt-2">Video uploaded successfully!</p>}
                 </div>
 
                 <button 
@@ -286,7 +304,7 @@ const CreateCourse = ({ onLogout }) => {
           {/* Submit Button */}
           <div className="mt-4">
             <button type="submit" className="btn btn-primary btn-lg w-100" disabled={isUploadingImage || isUploadingVideo}>
-              Publish your Course
+              Save Changes
             </button>
           </div>
         </form>
@@ -295,4 +313,4 @@ const CreateCourse = ({ onLogout }) => {
   );
 };
 
-export default CreateCourse;
+export default EditCourse;

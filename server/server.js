@@ -43,6 +43,14 @@ const instructorSchema = mongoose.Schema({
     password: { type: String, required: true },
     isEmailVerified: { type: Boolean, default: false },
     verificationToken: { type: String },
+
+    // Additional fields for instructor profile
+    name: { type: String },
+    username: { type: String },
+    linkedinUrl: { type: String },
+    githubUrl: { type: String },
+    phoneNumber: { type: String },
+    imageUrl: { type: String }
 });
 
 // Instructor Model
@@ -452,4 +460,72 @@ app.delete('/courses/:id', async (req, res) => {
         res.status(500).json({ error: 'Error deleting course' });
     }
 });
+
+// GET instructor profile
+app.get('/instructor/:instructorEmail', async (req, res) => {
+    try {
+        const instructor = await Instructor.findOne({ email: req.params.instructorEmail });
+        if (!instructor) return res.status(404).json({ message: 'Instructor not found' });
+        res.json(instructor);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching profile', error });
+    }
+});
+
+// PUT update instructor profile (excluding email)
+app.put('/instructor/:instructorEmail', async (req, res) => {
+    const { name, username, linkedinUrl, githubUrl, phoneNumber, imageUrl } = req.body;
+
+    try {
+        const updatedInstructor = await Instructor.findOneAndUpdate(
+            { email: req.params.instructorEmail },
+            { name, username, linkedinUrl, githubUrl, phoneNumber, imageUrl },
+            { new: true }
+        );
+
+        if (!updatedInstructor) return res.status(404).json({ message: 'Instructor not found' });
+        res.json(updatedInstructor);
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating profile', error });
+    }
+});
+
+
+// Multer storage for Cloudinary images profle pics
+const imageStorageProfile = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'instructor_profiles', // Folder for profile images
+        resource_type: 'image',  // Ensures Cloudinary treats this as an image upload
+    },
+});
+
+const imageUploadProfile = multer({ storage: imageStorageProfile });
+
+// API route for uploading profile image
+app.post('/upload-profile-image', imageUploadProfile.single('image'), async (req, res) => {
+    if (!req.file) return res.status(400).send('No image uploaded');
+
+    try {
+        const imageUrl = req.file.path; // Cloudinary URL of the uploaded image
+
+        // Update the instructor's profile with the image URL
+        const instructorEmail = req.body.email;  // Assuming you are passing the instructor's email to identify them
+        const instructor = await Instructor.findOne({ email: instructorEmail });
+
+        if (!instructor) {
+            return res.status(404).send('Instructor not found');
+        }
+
+        instructor.imageUrl = imageUrl;  // Update the imageUrl field in the database
+
+        await instructor.save();
+
+        res.json({ message: 'Profile image uploaded successfully', imageUrl: imageUrl });
+    } catch (error) {
+        console.error('Error uploading profile image:', error);
+        res.status(500).send('Internal server error');
+    }
+});
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

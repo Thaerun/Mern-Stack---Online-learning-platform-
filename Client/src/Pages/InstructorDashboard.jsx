@@ -14,7 +14,10 @@ const InstructorDashboard = ({ onLogout }) => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses`);
+                const instructorEmail = localStorage.getItem('instructorEmail');
+                const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses`, {
+                    instructorEmail: instructorEmail
+                });
                 setCourses(response.data);
             } catch (error) {
                 console.error("Error fetching courses:", error);

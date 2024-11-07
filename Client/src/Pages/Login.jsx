@@ -7,6 +7,7 @@ export default function Login({ setAuthToken }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate(); // Updated to useNavigate
+    
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -14,6 +15,7 @@ export default function Login({ setAuthToken }) {
             const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/login`, { email, password });
             const { token } = response.data;
             localStorage.setItem('authToken', token);
+            localStorage.setItem('userEmail', email);
             setAuthToken(token);
             navigate('/dashboard'); // Updated to navigate after login
         } catch (error) {

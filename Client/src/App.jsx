@@ -12,6 +12,12 @@ import Earnings from './Pages/earnings';
 import EditCourse from './Pages/EditCourse';
 import Profile from './Pages/Profile';
 import StudentDashboard from './Pages/StudentDashboard';
+import CourseDetails from './Pages/CourseDetails';
+import Payment from './Pages/Payment';
+import CourseContent from './Pages/CourseContent';
+import StudentProfile from './Pages/StudentProfile';
+import AdminPage from './Pages/Admin';
+import EnrolledStudents from './Pages/EnrolledStudents';
 
 export default function App() {
     const [authToken, setAuthToken] = useState(null);
@@ -23,12 +29,14 @@ export default function App() {
         if (token) {
             setAuthToken(token);
         }
-        setIsCheckingAuth(false); // Stop loading once auth check is complete
-    }, []); // Only run on mount
+        setIsCheckingAuth(false); 
+    }, []); 
 
     const handleLogout = () => {
         setAuthToken(null);
         localStorage.removeItem('authToken');
+        localStorage.removeItem('instructorEmail');
+        localStorage.removeItem('userEmail');
     };
 
     // Show a loading screen or prevent route rendering until auth is checked
@@ -43,6 +51,7 @@ export default function App() {
                 <Route path="/login" element={<Login setAuthToken={setAuthToken} />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/instructor-auth" element={<InstructorAuth setAuthToken={setAuthToken} />} />
+                <Route path="/admin" element={<AdminPage />} />
 
                 
                 {/* LandingPage is public */}
@@ -67,6 +76,11 @@ export default function App() {
                     element={authToken ? <Earnings onLogout={handleLogout} /> : <Navigate to="/instructor-auth" />} 
                 />
 
+                <Route
+                    path="/enrolled-students"
+                    element={authToken ? <EnrolledStudents onLogout={handleLogout} /> : <Navigate to="/instructor-auth" />} 
+                />
+
                 <Route 
                     path="/edit-course/:courseId" 
                     element={authToken ? <EditCourse  onLogout={handleLogout} /> : <Navigate to= "/instructor-auth" /> } 
@@ -76,6 +90,27 @@ export default function App() {
                     path="/profile"
                     element={authToken? <Profile onLogout={handleLogout} /> : <Navigate to="/instructor-auth" />}
                 />
+
+                <Route 
+                    path="/course/:courseId" 
+                    element={authToken? <CourseDetails onLogout={handleLogout} /> : <Navigate to="/login" />} 
+                />
+
+                <Route 
+                    path="/payment" 
+                    element={authToken? <Payment /> : <Navigate to="/login" />} 
+                />
+
+                <Route 
+                    path="/my-courses/:courseId" 
+                    element={authToken? <CourseContent onLogout={handleLogout} /> : <Navigate to="/login" />} 
+                />
+
+                <Route 
+                    path="/student-profile" 
+                    element={authToken? <StudentProfile onLogout={handleLogout} /> : <Navigate to="/login" />} 
+                />
+
                 {/* Redirect any undefined routes to home */}
                 <Route path="*" element={<Navigate to="/" />} /> 
             </Routes>

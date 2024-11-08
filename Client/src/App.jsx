@@ -18,6 +18,10 @@ import CourseContent from './Pages/CourseContent';
 import StudentProfile from './Pages/StudentProfile';
 import AdminPage from './Pages/Admin';
 import EnrolledStudents from './Pages/EnrolledStudents';
+import ContactUs from './Pages/Contactus'
+import Blog from './Pages/blog'
+import Careers from './Pages/careers'
+import TeacherGuidelines from './Pages/TeacherGuidelines'
 
 export default function App() {
     const [authToken, setAuthToken] = useState(null);
@@ -52,6 +56,10 @@ export default function App() {
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/instructor-auth" element={<InstructorAuth setAuthToken={setAuthToken} />} />
                 <Route path="/admin" element={<AdminPage />} />
+                <Route path="/contact-us" element={<ContactUs />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/careers" element={<Careers />} />
+                <Route path="/TeacherGuidelines" element={<TeacherGuidelines />} />
 
                 
                 {/* LandingPage is public */}

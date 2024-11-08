@@ -36,7 +36,7 @@ export default function Header() {
                                 <a className="nav-link" href="/teach">Teach</a>
                             </li>
                         </ul>
-                        <form className="d-flex me-2">
+                        {/* <form className="d-flex me-2">
                             <div className="input-group">
                                 <span className="input-group-text bg-white border-end-0">
                                     <FaSearch className="text-muted" />
@@ -48,7 +48,7 @@ export default function Header() {
                                     aria-label="Search"
                                 />
                             </div>
-                        </form>
+                        </form> */}
                         <div className="d-flex">
                             {/* Use onClick and navigate to login and signup */}
                             <button className="btn btn-outline-primary me-2" onClick={() => navigate('/login')}>

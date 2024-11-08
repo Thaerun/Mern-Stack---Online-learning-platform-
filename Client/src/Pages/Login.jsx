@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
 import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
 
-export default function Login({ setAuthToken }) {
+export default function Login({ setStudentToken }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate(); // Updated to useNavigate
@@ -14,9 +14,9 @@ export default function Login({ setAuthToken }) {
         try {
             const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/login`, { email, password });
             const { token } = response.data;
-            localStorage.setItem('authToken', token);
+            localStorage.setItem('studentToken', token);
             localStorage.setItem('userEmail', email);
-            setAuthToken(token);
+            setStudentToken(token);
             navigate('/dashboard'); // Updated to navigate after login
         } catch (error) {
             if (error.response && error.response.data === 'Please verify your email before logging in') {

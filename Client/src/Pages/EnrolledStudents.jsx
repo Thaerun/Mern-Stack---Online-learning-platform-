@@ -21,7 +21,11 @@ const EnrolledStudents = ({ onLogout }) => {
 
     const fetchCourses = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/courses/${instructorEmail}`);
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/courses/${instructorEmail}`, {
+          headers: {
+            'x-auth-token': localStorage.getItem('instructorToken')
+          }
+        });
         setCourses(response.data);  // Assuming the server returns the list of courses for the instructor
       } catch (error) {
         console.error('Error fetching courses:', error);
@@ -41,7 +45,11 @@ const EnrolledStudents = ({ onLogout }) => {
     }
 
     try {
-      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/courses/${instructorEmail}/${courseId}/students`);
+      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/courses/${instructorEmail}/${courseId}/students`, {
+        headers: {
+          'x-auth-token': localStorage.getItem('instructorToken')
+        }
+      });
       setStudents(response.data);
     } catch (error) {
       console.error('Error fetching students:', error);

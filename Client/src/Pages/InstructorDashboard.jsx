@@ -17,6 +17,10 @@ const InstructorDashboard = ({ onLogout }) => {
                 const instructorEmail = localStorage.getItem('instructorEmail');
                 const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses`, {
                     instructorEmail: instructorEmail
+                }, {
+                    headers: {
+                        'x-auth-token': localStorage.getItem('instructorToken')
+                    }
                 });
                 setCourses(response.data);
             } catch (error) {
@@ -46,7 +50,11 @@ const InstructorDashboard = ({ onLogout }) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this course?');
         if (confirmDelete) {
             try {
-                await axios.delete(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses/${id}`);
+                await axios.delete(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses/${id}`, {
+                    headers: {
+                        'x-auth-token': localStorage.getItem('instructorToken')
+                    }
+                });
                 setCourses(courses.filter(course => course._id !== id));
                 alert('Course deleted successfully!');
             } catch (error) {

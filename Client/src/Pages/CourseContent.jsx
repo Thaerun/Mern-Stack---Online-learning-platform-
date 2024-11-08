@@ -15,6 +15,9 @@ export default function CourseContent( {onLogout} ) {
       try {
         const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/student-dashboard/course-content`, {
           params: { email: userEmail, courseId },
+          headers: {
+            'x-auth-token': localStorage.getItem('studentToken')
+          }
         });
         setCourse(response.data.course);
         setProgress(response.data.courseProgress || { completedSections: [] });
@@ -33,7 +36,12 @@ export default function CourseContent( {onLogout} ) {
         email: userEmail,
         courseId,
         sectionId,
-      });
+      },
+    {
+      headers: {
+        'x-auth-token': localStorage.getItem('studentToken')
+      }
+    });
       setProgress((prevProgress) => ({
         ...prevProgress,
         completedSections: [...(prevProgress.completedSections || []), sectionId],
@@ -62,6 +70,11 @@ export default function CourseContent( {onLogout} ) {
           userEmail: userEmail, // Send the user's email
           courseTitle: course.title, // Send the course title
           completionDate: new Date().toLocaleDateString(), // Send today's date
+        },
+        {
+          headers: {
+            'x-auth-token': localStorage.getItem('studentToken')
+          }
         }
       );
   

@@ -11,7 +11,11 @@ const StudentProfile = ({onLogout}) => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/student/${email}`);
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/student/${email}`, {
+          headers: {
+            'x-auth-token': localStorage.getItem('studentToken')
+          }
+        });
         setStudent(response.data);
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -38,13 +42,25 @@ const StudentProfile = ({onLogout}) => {
         formData.append('image', newImage);
         formData.append('email', email);
 
-        const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/upload-profile-image-user`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        const response = await axios.post(
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/upload-profile-image-user`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'x-auth-token': localStorage.getItem('studentToken'),
+            },
+          }
+        );
+        
         updatedStudent.imageUrl = response.data.imageUrl;
       }
 
-      await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/student/${email}`, updatedStudent);
+      await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/student/${email}`, updatedStudent, {
+        headers: {
+          'x-auth-token': localStorage.getItem('studentToken')
+        }
+      });
 
       setIsEditing(false);
       setNewImage(null);

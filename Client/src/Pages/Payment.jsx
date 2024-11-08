@@ -21,6 +21,10 @@ const Payment = () => {
         await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/users/addCourse`, {
           email,
           courseId
+        }, {
+          headers: {
+            'x-auth-token': localStorage.getItem('studentToken')
+          }
         });
 
         // Redirect to dashboard after successful payment

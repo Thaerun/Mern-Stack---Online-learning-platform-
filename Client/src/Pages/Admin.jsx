@@ -18,7 +18,11 @@ const AdminPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/users`);
+      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/users`, {
+        headers: {
+          'x-auth-token': localStorage.getItem('instructorToken')
+        }
+      });
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -27,7 +31,11 @@ const AdminPage = () => {
 
   const fetchInstructors = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/instructors`);
+      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/instructors`, {
+        headers: {
+          'x-auth-token': localStorage.getItem('instructorToken')
+        }
+      });
       setInstructors(response.data);
     } catch (error) {
       console.error('Error fetching instructors:', error);
@@ -36,7 +44,11 @@ const AdminPage = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/courses`);
+      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/courses`, {
+        headers: {
+          'x-auth-token': localStorage.getItem('instructorToken')
+        }
+      });
       setCourses(response.data);
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -47,7 +59,11 @@ const AdminPage = () => {
     const confirmed = window.confirm('Are you sure you want to delete this course? This action cannot be undone.');
     if (confirmed) {
       try {
-        await axios.delete(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/courses/${courseId}`);
+        await axios.delete(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/admin/courses/${courseId}`,{
+          headers: {
+            'x-auth-token': localStorage.getItem('instructorToken')
+          }
+        });
         alert('Course deleted successfully');
         fetchCourses(); 
       } catch (error) {

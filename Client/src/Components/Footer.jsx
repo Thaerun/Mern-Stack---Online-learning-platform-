@@ -11,9 +11,8 @@ export default function Footer(){
       <div className="container">
         <div className="d-flex align-items-center justify-content-center">
           <div className="col-md-6 col-lg-3">
-            <h4 className="fw-bold mt-5">About Us</h4>
+            <h4 className="fw-bold mb-3">About Us</h4>
             <ul className="list-unstyled">
-              <li><a href="#" className="text-decoration-none text-muted">Our Story</a></li>
               <li><a href="#" className="text-decoration-none text-muted"onClick={() => navigate('/careers')}>Careers</a></li>
               <li><a href="#" className="text-decoration-none text-muted"onClick={() => navigate('/blog')}>Blog</a></li>
             </ul>
@@ -21,7 +20,7 @@ export default function Footer(){
           <div className="col-md-6 col-lg-3">
             <h4 className="fw-bold mb-3">Teach</h4>
             <ul className="list-unstyled">
-              <li><a href="#" className="text-decoration-none text-muted">Become an Instructor</a></li>
+              <li><a href="#" className="text-decoration-none text-muted" onClick={() => navigate('/instructor-auth')}>Become an Instructor</a></li>
               <li><a href="#" className="text-decoration-none text-muted" onClick={() => navigate('/TeacherGuidelines')}>Teacher Guidelines</a></li>
             </ul>
           </div>

@@ -15,16 +15,29 @@ export default function CourseDetails( {onLogout} ) {
   useEffect(() => {
     const fetchCourseDetails = async () => {
       try {
-        const courseResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses/${courseId}`);
+        const courseResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses/${courseId}`, {
+          headers: {
+            'x-auth-token': localStorage.getItem('studentToken')
+          }
+        });
         setCourse(courseResponse.data);
 
-        const instructorResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructors/${courseResponse.data.instructorEmail}`);
+        const instructorResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructors/${courseResponse.data.instructorEmail}`, {
+          headers: {
+            'x-auth-token': localStorage.getItem('studentToken')
+          }
+        });
         setInstructor(instructorResponse.data);
 
         // Check if the user is already enrolled
         const userResponse = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/users/check-course-purchase`, {
           userEmail: userEmail,
           courseId: courseId
+        },
+        {
+          headers: {
+            'x-auth-token': localStorage.getItem('studentToken')
+          }
         });
 
         // If user has purchased the course, set isEnrolled to true

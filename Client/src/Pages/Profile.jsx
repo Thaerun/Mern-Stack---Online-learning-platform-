@@ -14,7 +14,11 @@ const Profile = ({ onLogout }) => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/${email}`);
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/${email}`, {
+          headers: {
+            'x-auth-token': localStorage.getItem('instructorToken')
+          }
+        });
         setInstructor(response.data);
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -58,12 +62,18 @@ const Profile = ({ onLogout }) => {
         formData.append('email', email);
 
         const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/upload-profile-image`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
+          headers: { 'Content-Type': 'multipart/form-data',
+                     'x-auth-token': localStorage.getItem('instructorToken'),
+           },
         });
         updatedInstructor.imageUrl = response.data.imageUrl;
       }
 
-      await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/${email}`, updatedInstructor);
+      await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/${email}`, updatedInstructor, {
+        headers: {
+          'x-auth-token': localStorage.getItem('instructorToken')
+        }
+      });
 
       setIsEditing(false);
       setNewImage(null);

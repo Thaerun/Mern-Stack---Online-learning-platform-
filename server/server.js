@@ -202,6 +202,7 @@ app.post('/login', async (req, res) => {
 // Protect Route (middleware example)
 const authMiddleware = (req, res, next) => {
     const token = req.header('x-auth-token');
+    // console.log(token);
     if (!token) return res.status(401).send('No token, authorization denied');
     
     try {
@@ -400,7 +401,7 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage });
 
 // Video upload route using Cloudinary
-app.post('/upload-video', upload.single('video'), (req, res) => {
+app.post('/upload-video', authMiddleware, upload.single('video'), (req, res) => {
     if (!req.file) return res.status(400).send('No file uploaded');
 
     // The Cloudinary URL and public ID are returned in req.file.path and req.file.filename
@@ -418,13 +419,13 @@ const imageStorage = new CloudinaryStorage({
 const imageUpload = multer({ storage: imageStorage });
 
 // Image upload route using Cloudinary (new route)
-app.post('/upload-image', imageUpload.single('image'), (req, res) => {
+app.post('/upload-image',authMiddleware, imageUpload.single('image'), (req, res) => {
     if (!req.file) return res.status(400).send('No file uploaded');
     res.json({ url: req.file.path, publicId: req.file.filename });
 });
 
 // Update the Course creation route to accept video URLs from Cloudinary
-app.post('/create-course', async (req, res) => {
+app.post('/create-course',authMiddleware, async (req, res) => {
     const { title, price, description, requirements, sections, instructorEmail, imageUrl } = req.body;
 
     try {
@@ -452,7 +453,7 @@ app.post('/create-course', async (req, res) => {
 });
 
 // Get courses by instructor email
-app.post('/courses', async (req, res) => {
+app.post('/courses', authMiddleware, async (req, res) => {
     const { instructorEmail } = req.body; 
 
     try {
@@ -466,7 +467,7 @@ app.post('/courses', async (req, res) => {
 
 
 // Get course by ID Route
-app.get('/courses/:id', async (req, res) => {
+app.get('/courses/:id', authMiddleware, async (req, res) => {
     try {
         const course = await Course.findById(req.params.id);
         if (!course) return res.status(404).json({ message: 'Course not found' });
@@ -478,7 +479,7 @@ app.get('/courses/:id', async (req, res) => {
 });
 
 // Edit course Route
-app.put('/courses/:id', async (req, res) => {
+app.put('/courses/:id', authMiddleware, async (req, res) => {
     try {
         const updatedCourse = await Course.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updatedCourse) return res.status(404).json({ message: 'Course not found' });
@@ -490,7 +491,7 @@ app.put('/courses/:id', async (req, res) => {
 });
 
 // Delete course Route
-app.delete('/courses/:id', async (req, res) => {
+app.delete('/courses/:id', authMiddleware, async (req, res) => {
     try {
         const deletedCourse = await Course.findByIdAndDelete(req.params.id);
         if (!deletedCourse) return res.status(404).json({ message: 'Course not found' });
@@ -502,7 +503,7 @@ app.delete('/courses/:id', async (req, res) => {
 });
 
 // GET instructor profile
-app.get('/instructor/:instructorEmail', async (req, res) => {
+app.get('/instructor/:instructorEmail', authMiddleware, async (req, res) => {
     try {
         const instructor = await Instructor.findOne({ email: req.params.instructorEmail });
         if (!instructor) return res.status(404).json({ message: 'Instructor not found' });
@@ -513,7 +514,7 @@ app.get('/instructor/:instructorEmail', async (req, res) => {
 });
 
 // PUT update instructor profile (excluding email)
-app.put('/instructor/:instructorEmail', async (req, res) => {
+app.put('/instructor/:instructorEmail', authMiddleware, async (req, res) => {
     const { name, username, linkedinUrl, githubUrl, phoneNumber, imageUrl } = req.body;
 
     try {
@@ -543,7 +544,7 @@ const imageStorageProfile = new CloudinaryStorage({
 const imageUploadProfile = multer({ storage: imageStorageProfile });
 
 // API route for uploading profile image
-app.post('/upload-profile-image', imageUploadProfile.single('image'), async (req, res) => {
+app.post('/upload-profile-image', authMiddleware, imageUploadProfile.single('image'), async (req, res) => {
     if (!req.file) return res.status(400).send('No image uploaded');
 
     try {
@@ -571,7 +572,7 @@ app.post('/upload-profile-image', imageUploadProfile.single('image'), async (req
 
 // Student Dashboard Courses page
 // Get all courses for StudentDashboard
-app.get('/student-dashboard/courses', async (req, res) => {
+app.get('/student-dashboard/courses', authMiddleware, async (req, res) => {
     try {
         // Retrieve all courses
         const courses = await Course.find();
@@ -582,7 +583,7 @@ app.get('/student-dashboard/courses', async (req, res) => {
     }
 });
 
-app.get('/student-dashboard/courses/:courseId', async(req, res) => {
+app.get('/student-dashboard/courses/:courseId', authMiddleware, async(req, res) => {
     const { courseId } = req.params;
     try{
         const course = await Course.findOne({_id: courseId});
@@ -597,7 +598,7 @@ app.get('/student-dashboard/courses/:courseId', async(req, res) => {
     }
 });
 
-app.get('/instructors/:instructorEmail', async(req, res) => {
+app.get('/instructors/:instructorEmail', authMiddleware, async(req, res) => {
     const { instructorEmail } = req.params;
     try{
         const instructor = await Instructor.findOne({ email: instructorEmail });
@@ -613,7 +614,7 @@ app.get('/instructors/:instructorEmail', async(req, res) => {
 });
 
 // Route to add purchased course
-app.put('/users/addCourse', async (req, res) => {
+app.put('/users/addCourse', authMiddleware, async (req, res) => {
     const { email, courseId } = req.body;
   
     try {
@@ -630,7 +631,7 @@ app.put('/users/addCourse', async (req, res) => {
 
 
 // Endpoint to check if the user has already purchased the course
-app.post('/users/check-course-purchase', async (req, res) => {
+app.post('/users/check-course-purchase', authMiddleware, async (req, res) => {
     try {
         const { userEmail, courseId } = req.body;
 
@@ -658,7 +659,7 @@ app.post('/users/check-course-purchase', async (req, res) => {
 });
 
 // Endpoint to fetch the courses a user has purchased along with progress
-app.get('/student-dashboard/my-courses', async (req, res) => {
+app.get('/student-dashboard/my-courses', authMiddleware, async (req, res) => {
     try {
         const { email } = req.query;  // Get the user's email from query parameters
 
@@ -694,7 +695,7 @@ app.get('/student-dashboard/my-courses', async (req, res) => {
   
 
 // Get course content by courseId
-app.get('/student-dashboard/course-content', async (req, res) => {
+app.get('/student-dashboard/course-content', authMiddleware, async (req, res) => {
     const { email, courseId } = req.query;
   
     try {
@@ -720,7 +721,7 @@ app.get('/student-dashboard/course-content', async (req, res) => {
 
   
 // Mark section as completed and update last-viewed section
-app.post('/student-dashboard/update-progress', async (req, res) => {
+app.post('/student-dashboard/update-progress', authMiddleware, async (req, res) => {
     const { email, courseId, sectionId } = req.body;
   
     try {
@@ -757,7 +758,7 @@ app.post('/student-dashboard/update-progress', async (req, res) => {
 
 
 // GET instructor profile
-app.get('/student/:userEmail', async (req, res) => {
+app.get('/student/:userEmail', authMiddleware, async (req, res) => {
     try {
         const user = await User.findOne({ email: req.params.userEmail });
         if (!user) return res.status(404).json({ message: 'User not found' });
@@ -768,7 +769,7 @@ app.get('/student/:userEmail', async (req, res) => {
 });
 
 // PUT update instructor profile (excluding email)
-app.put('/student/:userEmail', async (req, res) => {
+app.put('/student/:userEmail', authMiddleware, async (req, res) => {
     const { name, username, linkedinUrl, githubUrl, phoneNumber, imageUrl } = req.body;
 
     try {
@@ -798,7 +799,7 @@ const imageStorageProfileUser = new CloudinaryStorage({
 const imageUploadProfileUser = multer({ storage: imageStorageProfileUser });
 
 // API route for uploading profile image
-app.post('/upload-profile-image-user', imageUploadProfileUser.single('image'), async (req, res) => {
+app.post('/upload-profile-image-user', authMiddleware, imageUploadProfileUser.single('image'), async (req, res) => {
     if (!req.file) return res.status(400).send('No image uploaded');
 
     try {
@@ -826,7 +827,7 @@ app.post('/upload-profile-image-user', imageUploadProfileUser.single('image'), a
 
 
 // 1. Get all users
-app.get('/admin/users', async (req, res) => {
+app.get('/admin/users',authMiddleware, async (req, res) => {
     try {
       const users = await User.find();
       res.json(users);
@@ -836,7 +837,7 @@ app.get('/admin/users', async (req, res) => {
   });
   
   // 2. Get all instructors
-  app.get('/admin/instructors', async (req, res) => {
+  app.get('/admin/instructors',authMiddleware, async (req, res) => {
     try {
       const instructors = await Instructor.find();
       res.json(instructors);
@@ -846,7 +847,7 @@ app.get('/admin/users', async (req, res) => {
   });
   
   // 3. Get all courses
-  app.get('/admin/courses', async (req, res) => {
+  app.get('/admin/courses', authMiddleware, async (req, res) => {
     try {
       const courses = await Course.find();
       res.json(courses);
@@ -856,7 +857,7 @@ app.get('/admin/users', async (req, res) => {
   });
   
   // 4. Delete course
-  app.delete('/admin/courses/:id', async (req, res) => {
+  app.delete('/admin/courses/:id', authMiddleware, async (req, res) => {
     try {
       const { id } = req.params;
       await Course.findByIdAndDelete(id);
@@ -867,7 +868,7 @@ app.get('/admin/users', async (req, res) => {
   });
   
   // 5. Get a single instructor's courses
-  app.get('/admin/instructors/:email/courses', async (req, res) => {
+  app.get('/admin/instructors/:email/courses', authMiddleware, async (req, res) => {
     try {
       const { email } = req.params;
       const instructorCourses = await Course.find({ instructorEmail: email });
@@ -879,7 +880,7 @@ app.get('/admin/users', async (req, res) => {
 
 
 // Fetch all courses taught by a specific instructor
-app.get('/instructor/courses/:instructorEmail', async (req, res) => {
+app.get('/instructor/courses/:instructorEmail', authMiddleware, async (req, res) => {
     try {
       const { instructorEmail } = req.params;  // Get instructor's email from route parameters
   
@@ -904,7 +905,7 @@ app.get('/instructor/courses/:instructorEmail', async (req, res) => {
   });
   
   // Fetch students enrolled in a specific course, only for the instructor who created the course
-  app.get('/instructor/courses/:instructorEmail/:courseId/students', async (req, res) => {
+  app.get('/instructor/courses/:instructorEmail/:courseId/students', authMiddleware, async (req, res) => {
     try {
       const { courseId, instructorEmail } = req.params;  // Get courseId and instructorEmail from route parameters
   
@@ -941,7 +942,7 @@ app.get('/instructor/courses/:instructorEmail', async (req, res) => {
   });
 
 // Get all messages for a specific course's discussion thread
-app.get('/student-dashboard/forums/:courseId/threads', async (req, res) => {
+app.get('/student-dashboard/forums/:courseId/threads', authMiddleware, async (req, res) => {
   try {
     const { courseId } = req.params;
 
@@ -961,7 +962,7 @@ app.get('/student-dashboard/forums/:courseId/threads', async (req, res) => {
 });
 
 // Post a new message to a specific course's discussion thread
-app.post('/student-dashboard/forums/:courseId/threads', async (req, res) => {
+app.post('/student-dashboard/forums/:courseId/threads', authMiddleware, async (req, res) => {
   try {
     const { courseId } = req.params;
     const { userName, message } = req.body; // Expect 'userName' and 'message' in request body
@@ -985,7 +986,7 @@ app.post('/student-dashboard/forums/:courseId/threads', async (req, res) => {
 
 
 // Route to get the user's name based on email
-app.get('/api/users/name', async (req, res) => {
+app.get('/api/users/name', authMiddleware, async (req, res) => {
     try {
       const { email } = req.query; // Get email from query parameters
       const user = await User.findOne({ email }, 'name'); // Fetch only the name field
@@ -994,7 +995,7 @@ app.get('/api/users/name', async (req, res) => {
         return res.status(404).json({ message: 'User not found' });
       }
   
-      console.log(user.name);
+      //console.log(user.name);
       res.json({ name: user.name });
     } catch (error) {
       console.error("Error fetching user name:", error);
@@ -1003,7 +1004,7 @@ app.get('/api/users/name', async (req, res) => {
   });
 
 
-  app.post('/generate-certificate', async (req, res) => {
+  app.post('/generate-certificate', authMiddleware, async (req, res) => {
     const { userEmail, courseTitle, completionDate } = req.body;
   
     try {
@@ -1035,4 +1036,25 @@ app.get('/api/users/name', async (req, res) => {
       res.status(500).send('Error generating certificate');
     }
   });
+
+// Fetch all courses
+app.get('/api/courses', authMiddleware, async (req, res) => {
+  try {
+      const courses = await Course.find({}).select('_id title');
+      res.json(courses);
+  } catch (error) {
+      res.status(500).json({ error: 'Error fetching courses' });
+  }
+});
+
+// Fetch user by email to get purchased courses
+app.get('/api/users/:email', authMiddleware, async (req, res) => {
+  try {
+      const user = await User.findOne({ email: req.params.email }).select('purchasedCourses');
+      res.json(user);
+  } catch (error) {
+      res.status(500).json({ error: 'Error fetching user data' });
+  }
+});
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

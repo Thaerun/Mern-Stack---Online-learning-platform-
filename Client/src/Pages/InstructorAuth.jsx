@@ -3,7 +3,7 @@ import { Form, Button, Card, Container, Row, Col, Modal, Nav } from 'react-boots
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-export default function InstructorAuth({ setAuthToken }) {
+export default function InstructorAuth({ setInstructorToken }) {
     const [currentView, setCurrentView] = useState('login');
     const [otpButtonText, setOtpButtonText] = useState("Send OTP");
     const [email, setEmail] = useState('');
@@ -20,9 +20,9 @@ export default function InstructorAuth({ setAuthToken }) {
         e.preventDefault();
         try {
             const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/instructor/login`, { email, password });
-            localStorage.setItem('authToken', response.data.token);
+            localStorage.setItem('instructorToken', response.data.token);
             localStorage.setItem('instructorEmail', email);
-            setAuthToken(response.data.token);
+            setInstructorToken(response.data.token);
             navigate('/instructor-dashboard'); // Redirect to instructor dashboard
         } catch (error) {
             if (error.response && error.response.data === 'Please verify your email before logging in') {

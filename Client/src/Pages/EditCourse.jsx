@@ -25,7 +25,11 @@ const EditCourse = ({ onLogout }) => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses/${courseId}`);
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses/${courseId}`, {
+          headers: {
+            'x-auth-token': localStorage.getItem('instructorToken')
+          }
+        });
         const { title, price, description, requirements, sections, imageUrl } = response.data;
         setCourseTitle(title);
         setCoursePrice(price);
@@ -83,7 +87,9 @@ const EditCourse = ({ onLogout }) => {
 
     try {
       const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/upload-image`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { 'Content-Type': 'multipart/form-data',
+          'x-auth-token': localStorage.getItem('instructorToken'),
+         },
       });
       setCourseImageUrl(response.data.url);
     } catch (error) {
@@ -104,7 +110,9 @@ const EditCourse = ({ onLogout }) => {
       formData.append('video', file);
 
       const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/upload-video`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { 'Content-Type': 'multipart/form-data',
+          'x-auth-token': localStorage.getItem('instructorToken'),
+         },
       });
 
       updatedSections[index].videoUrl = response.data.url;
@@ -139,7 +147,11 @@ const EditCourse = ({ onLogout }) => {
     };
 
     try {
-      const response = await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses/${courseId}`, courseData);
+      const response = await axios.put(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/courses/${courseId}`, courseData, {
+        headers: {
+          'x-auth-token': localStorage.getItem('instructorToken')
+        }
+      });
       console.log("Course updated successfully:", response.data);
       navigate('/instructor-dashboard'); // Redirect to dashboard after saving
     } catch (error) {

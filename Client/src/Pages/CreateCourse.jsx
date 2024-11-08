@@ -61,7 +61,10 @@ const CreateCourse = ({ onLogout }) => {
 
     try {
       const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/upload-image`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { 
+                    'Content-Type': 'multipart/form-data',
+                    'x-auth-token': localStorage.getItem('instructorToken'),
+         },
       });
       setCourseImageUrl(response.data.url);
     } catch (error) {
@@ -83,7 +86,9 @@ const CreateCourse = ({ onLogout }) => {
       formData.append('video', file);
 
       const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/upload-video`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { 'Content-Type': 'multipart/form-data',
+          'x-auth-token': localStorage.getItem('instructorToken'),
+         },
       });
 
       updatedSections[index].videoUrl = response.data.url;
@@ -118,7 +123,11 @@ const CreateCourse = ({ onLogout }) => {
     };
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/create-course`, courseData);
+      const response = await axios.post(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/create-course`, courseData, {
+        headers: {
+          'x-auth-token': localStorage.getItem('instructorToken')
+        }
+      });
       console.log("Course created successfully:", response.data);
       window.location.reload(); // to relaod the page so that the fields gets reset
     } catch (error) {

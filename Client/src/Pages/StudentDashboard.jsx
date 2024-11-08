@@ -21,7 +21,12 @@ const StudentDashboard = ({ onLogout }) => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/users/name`,
-          { params: { email: userEmail } }
+          { 
+            params: { email: userEmail },
+            headers: {
+              'x-auth-token': localStorage.getItem('studentToken')
+            }
+          }
         );
         setUserName(response.data.name);
       } catch (error) {
@@ -36,7 +41,11 @@ const StudentDashboard = ({ onLogout }) => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/student-dashboard/courses`);
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/student-dashboard/courses`, {
+          headers: {
+            'x-auth-token': localStorage.getItem('studentToken')
+          }
+        });
         setCourses(response.data);
       } catch (error) {
         console.error("Error fetching all courses:", error);
@@ -46,7 +55,10 @@ const StudentDashboard = ({ onLogout }) => {
     const fetchMyCourses = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/student-dashboard/my-courses`, {
-          params: { email: userEmail }
+          params: { email: userEmail }, 
+          headers: {
+            'x-auth-token': localStorage.getItem('studentToken')
+          }
         });
         setMyCourses(response.data);
       } catch (error) {
@@ -67,7 +79,11 @@ const StudentDashboard = ({ onLogout }) => {
       const fetchThreads = async () => {
         try {
           const response = await axios.get(
-            `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/student-dashboard/forums/${selectedCourse._id}/threads`
+            `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/student-dashboard/forums/${selectedCourse._id}/threads`, {
+              headers: {
+                'x-auth-token': localStorage.getItem('studentToken')
+              }
+            }
           );
           setThreads(response.data);
         } catch (error) {
@@ -91,7 +107,12 @@ const StudentDashboard = ({ onLogout }) => {
         {
           userName: userName, // Use userName from state
           message: newMessage,
-        }
+        },
+        {
+          headers: {
+            'x-auth-token': localStorage.getItem('studentToken')
+          }
+      }
       );
       setThreads([...threads, response.data]); // Append the new message to the thread
       setNewMessage(''); // Clear the message input

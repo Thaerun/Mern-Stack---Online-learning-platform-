@@ -56,29 +56,24 @@ Rename the environment file in the client side.
 ```
 
 ### 4. Setting up the frontend
-
-    i) Open a new terminal in VS Code
-    ii) Run the following command to install the required packages and start the frontend
+Open a new terminal in VS Code and run the following commands to install the required packages and start the frontend
 
 ```bash
     cd Client
     npm install   # install the required packages
     npm run dev
 ```
-    iii) Open a browser and navigate to http://localhost:5173 to access the frontend of the application.
+Open a browser and navigate to http://localhost:5173 to access the frontend of the application.
 
 ### 5. Setting up the backend
-
-    i) Open another terminal in VS Code.
-    ii) Run the following commands to install the necessary packages and start the backend server
+Open another terminal in VS Code and run the following commands to install the necessary packages and start the backend server
 
 ```bash 
     cd server
     npm install      # install the required packages
     node server.js   # or use nodemon for automatic restarts with `nodemon server.js`
 ```
-
-    iii) The backend server will start on **PORT 5000** by default. You can adjust this setting in the .env file if needed.
+The backend server will start on **PORT 5000** by default. You can adjust this setting in the .env file if needed.
 
 ---
 

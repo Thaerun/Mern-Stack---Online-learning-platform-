@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import HeaderStudent from '../Components/HeaderStudent';
 
-export default function CourseContent() {
+export default function CourseContent( {onLogout} ) {
   const { courseId } = useParams();
   const [course, setCourse] = useState(null);
   const [progress, setProgress] = useState({ completedSections: [] });
@@ -101,7 +101,7 @@ export default function CourseContent() {
 
   return (
     <>
-      <HeaderStudent />
+      <HeaderStudent onLogout={onLogout}/>
       <div className="container-fluid p-0">
         <div className="row g-0">
           {/* Sidebar */}

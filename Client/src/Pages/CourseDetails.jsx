@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import HeaderStudent from '../Components/HeaderStudent';
 
-export default function CourseDetails() {
+export default function CourseDetails( {onLogout} ) {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
@@ -53,7 +53,7 @@ export default function CourseDetails() {
 
   return (
     <>
-      <HeaderStudent />
+      <HeaderStudent onLogout={onLogout}/>
       <div className="container-fluid p-0">
         {/* Course Header */}
         <div className="bg-dark text-white py-5" style={{ backgroundColor: '#1c1d1f' }}>

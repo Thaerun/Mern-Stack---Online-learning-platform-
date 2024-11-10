@@ -149,8 +149,9 @@ const StudentDashboard = ({ onLogout }) => {
                   <div className="card-body d-flex flex-column">
                     <h5 className="card-title text-primary">{course.title}</h5>
                     <p className="card-text text-muted" style={{ flexGrow: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {course.description}
+                      {course.description.length > 100 ? course.description.slice(0, 100) + "..." : course.description}
                     </p>
+
                   </div>
                 </div>
               </div>
@@ -183,8 +184,9 @@ const StudentDashboard = ({ onLogout }) => {
                   <div className="card-body d-flex flex-column">
                     <h5 className="card-title text-primary">{course.title}</h5>
                     <p className="card-text text-muted" style={{ flexGrow: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {course.description}
+                      {course.description.length > 100 ? course.description.slice(0, 100) + "..." : course.description}
                     </p>
+
                     <div className="progress mt-2">
                       <div
                         className="progress-bar"

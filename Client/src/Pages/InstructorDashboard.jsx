@@ -94,12 +94,14 @@ const InstructorDashboard = ({ onLogout }) => {
                                         width: '100%',
                                         objectFit: 'contain',
                                         padding: '2px 5px',
-                                        borderRadius: '8px', // Rounded corners for the image
+                                        borderRadius: '8px', 
                                     }}
                                 />
                                 <div className="card-body d-flex flex-column">
                                     <h5 className="card-title text-primary">{course.title}</h5>
-                                    <p className="card-text text-muted" style={{ flexGrow: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>{course.description}</p>
+                                    <p className="card-text text-muted" style={{ flexGrow: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {course.description.slice(0, 100) + (course.description.length > 100 ? "..." : "")}
+                                    </p>
                                     <div className="d-flex justify-content-between">
                                         <button className="btn btn-outline-primary btn-sm" onClick={() => handleEdit(course._id)}>Edit</button>
                                         <button className="btn btn-link text-danger btn-sm" onClick={() => handleDelete(course._id)}>Delete</button>

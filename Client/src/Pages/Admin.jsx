@@ -193,8 +193,20 @@ const AdminPage = () => {
       </section>
 
       {isUserPopupOpen && selectedUser && (
-        <div className="d-flex justify-content-center align-items-center" style={{ position: 'fixed', top: '0', left: '0', right: '0', bottom: '0', zIndex: 9999 }}>
-          <div className="bg-white p-4 rounded shadow-lg" style={{ width: '80%', maxWidth: '600px', border: '1px solid #ccc' }}>
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ position: 'fixed', top: '0', left: '0', right: '0', bottom: '0', zIndex: 9999 }}
+        >
+          <div
+            className="bg-white p-4 rounded shadow-lg"
+            style={{
+              width: '80%',
+              maxWidth: '600px',
+              border: '1px solid #ccc',
+              maxHeight: '80vh',
+              overflowY: 'auto'
+            }}
+          >
             <button className="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" onClick={closeUserPopup}>
               X
             </button>
@@ -209,22 +221,32 @@ const AdminPage = () => {
       )}
 
       {isInstructorPopupOpen && selectedInstructor && (
-        <div className="d-flex justify-content-center align-items-center" style={{ position: 'fixed', top: '0', left: '0', right: '0', bottom: '0', zIndex: 9999 }}>
-          <div className="bg-white p-4 rounded shadow-lg" style={{ width: '80%', maxWidth: '600px', border: '1px solid #ccc' }}>
+        <div 
+          className="d-flex justify-content-center align-items-center" 
+          style={{ position: 'fixed', top: '0', left: '0', right: '0', bottom: '0', zIndex: 9999 }}
+        >
+          <div 
+            className="bg-white p-4 rounded shadow-lg" 
+            style={{ 
+              width: '80%', 
+              maxWidth: '600px', 
+              border: '1px solid #ccc',
+              maxHeight: '80vh',
+              overflowY: 'auto'
+            }}
+          >
             <button className="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" onClick={closeInstructorPopup}>
               X
             </button>
             <h3>{selectedInstructor.name}'s Courses</h3>
-            {/* Display courses taught by this instructor */}
             {courses.filter(course => course.instructorEmail === selectedInstructor.email).length > 0 ? (
               courses.filter(course => course.instructorEmail === selectedInstructor.email).map((course, index) => (
-                <div key={index} className="course-details">
+                <div key={index} className="course-details mb-4">
                   <h4>Course {index + 1}</h4>
                   <p><strong>Title:</strong> {course.title}</p>
                   <p><strong>Description:</strong> {course.description}</p>
                   <p><strong>Price:</strong> ${course.price}</p>
 
-                  {/* Display the list of students enrolled in this course */}
                   <h5>Enrolled Students:</h5>
                   {users.filter(user => user.purchasedCourses && user.purchasedCourses.includes(course._id)).length > 0 ? (
                     users.filter(user => user.purchasedCourses && user.purchasedCourses.includes(course._id)).map((user, idx) => (
@@ -244,7 +266,6 @@ const AdminPage = () => {
         </div>
       )}
     </div>
-    // <Balachandar></Balachandar>
   );
 };
 

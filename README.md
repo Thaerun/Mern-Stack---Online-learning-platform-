@@ -31,6 +31,10 @@ We are the students of **Computer Science and Engineering** (CSE) department pur
 
 This online learning platform is designed to enhance student engagement and facilitate instructor-student interaction through a user-friendly, feature-rich web interface. It includes features like course enrollment, access to educational content, forum discussions, and profile management. This web app is built with the MERN stack, ensuring a seamless user experience and efficient data management.
 
+
+**Project Report:** [View the full project report (PDF)](./Online%20Learning%20Platform%20using%20MERN%20-%20Report.pdf)
+
+
 ---
 
 ## Steps to Run the Application Locally

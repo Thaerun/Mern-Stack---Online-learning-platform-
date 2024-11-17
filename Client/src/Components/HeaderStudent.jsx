@@ -16,7 +16,7 @@ export default function HeaderStudent({ onLogout, userEmail }) {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/courses`, {
+                const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/users/courses`, {
                     headers: {
                         'x-auth-token': localStorage.getItem('studentToken')
                       }
@@ -29,7 +29,7 @@ export default function HeaderStudent({ onLogout, userEmail }) {
 
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/users/${userEmail123}`, {
+                const response = await axios.get(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/users/${userEmail123}`, {
                     headers: {
                         'x-auth-token': localStorage.getItem('studentToken')
                       }

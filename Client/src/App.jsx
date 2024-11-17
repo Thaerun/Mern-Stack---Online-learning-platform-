@@ -1,28 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import axios from 'axios';
-import Signup from './Pages/Signup';
-import Login from './Pages/Login';
+import Signup from './Pages/User/Signup';
+import Login from './Pages/User/Login';
+import ForgotPassword from './Pages/User/ForgotPassword';
+import StudentDashboard from './Pages/User/StudentDashboard';
+import CourseDetails from './Pages/User/CourseDetails';
+import Payment from './Pages/User/Payment';
+import CourseContent from './Pages/User/CourseContent';
+import StudentProfile from './Pages/User/StudentProfile';
+import InstructorAuth from './Pages/Instructor/InstructorAuth';
+import InstructorDashboard from './Pages/Instructor/InstructorDashboard';
+import CreateCourse from './Pages/Instructor/CreateCourse';
+import Earnings from './Pages/Instructor/earnings';
+import EditCourse from './Pages/Instructor/EditCourse';
+import Profile from './Pages/Instructor/Profile';
+import EnrolledStudents from './Pages/Instructor/EnrolledStudents';
+
 import LandingPage from './Pages/LandingPage';
-import Dashboard from './Pages/Dashboard';
-import ForgotPassword from './Pages/ForgotPassword';
-import InstructorAuth from './Pages/InstructorAuth';
-import InstructorDashboard from './Pages/InstructorDashboard';
-import CreateCourse from './Pages/CreateCourse';
-import Earnings from './Pages/earnings';
-import EditCourse from './Pages/EditCourse';
-import Profile from './Pages/Profile';
-import StudentDashboard from './Pages/StudentDashboard';
-import CourseDetails from './Pages/CourseDetails';
-import Payment from './Pages/Payment';
-import CourseContent from './Pages/CourseContent';
-import StudentProfile from './Pages/StudentProfile';
-import AdminPage from './Pages/Admin';
-import EnrolledStudents from './Pages/EnrolledStudents';
-import ContactUs from './Pages/Contactus';
-import Blog from './Pages/blog';
-import Careers from './Pages/careers';
-import TeacherGuidelines from './Pages/TeacherGuidelines';
+import AdminPage from './Pages/Admin/Admin';
+
+import ContactUs from './Pages/Navs/Contactus';
+import Blog from './Pages/Navs/blog';
+import Careers from './Pages/Navs/careers';
+import TeacherGuidelines from './Pages/Navs/TeacherGuidelines';
 
 export default function App() {
     const [studentToken, setStudentToken] = useState(null);
